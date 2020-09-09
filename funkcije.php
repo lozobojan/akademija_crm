@@ -43,6 +43,20 @@
 		return $row;
 	}
 
+	function prijavljeni_korisnik(){
+		global $dbconn;
+
+		$korisnik_id = $_SESSION['prijava']['korisnik_id'];
+		if(is_null($korisnik_id))
+			return false;
+
+		$sql = "SELECT ime, prezime, username FROM korisnik WHERE id = $korisnik_id";
+		$res = mysqli_query($dbconn, $sql);
+		$row = mysqli_fetch_assoc($res);
+
+		return $row;
+	}
+
 	function autorizacija($redirect = "../login.html"){
 		if(!$_SESSION['prijava']['ok']){
 			header("Location: $redirect");

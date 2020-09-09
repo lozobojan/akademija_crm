@@ -10,10 +10,21 @@
 	$uloga_id = $uloga_korisnika['id'];
 	$uloga_naziv = $uloga_korisnika['naziv'];
 
+	$dodijeljeni = false;
+	if(isset($_GET['prikazi_dodijeljene']) && $_GET['prikazi_dodijeljene'] == true ){
+		$dodijeljeni = true;
+	}
+
 	$where_uslov = " 1=1 ";
 	// ako je administrator
 	if($uloga_id == 1){
-		$where_uslov .= " AND za_korisnika is null ";
+		if($dodijeljeni){
+			// prikazujemo one koji su dodijeljeni
+			$where_uslov .= " AND za_korisnika is not null ";
+		}else{
+			// prikazujemo one koji su nedodijeljeni
+			$where_uslov .= " AND za_korisnika is null ";
+		}
 	}else{
 		$where_uslov .= " AND za_korisnika = $korisnik_id ";
 	}
@@ -27,12 +38,14 @@
 						pk.naziv as potkategorija,
 						p.naziv as prioritet,
 						s.naziv as status,
-						z.datum as datum
+						z.datum as datum,
+						CONCAT(op.ime, ' ', op.prezime ) as operater
 					FROM zahtjev z
 					JOIN kategorija k on k.id = z.kategorija_id
 					JOIN potkategorija pk on pk.id = z.potkategorija_id
 					JOIN prioritet p on p.id = z.prioritet_id
 					JOIN status s on s.id = z.status_id
+					LEFT JOIN korisnik op on op.id = z.za_korisnika 
 					WHERE $where_uslov
 					ORDER BY datum ASC
 	";
@@ -47,6 +60,7 @@
 		$prioritet = $row['prioritet'];
 		$status = $row['status'];
 		$datum = $row['datum'];
+		$operater = $row['operater'];
 
 		$datum = date('d.m.Y [H:i]', strtotime($datum) );
 
@@ -58,7 +72,8 @@
 							'potkategorija' => $potkategorija,
 							'prioritet' => $prioritet,
 							'status' => $status,
-							'datum' => $datum
+							'datum' => $datum,
+							'operater' => $operater
 						];
 	}
 

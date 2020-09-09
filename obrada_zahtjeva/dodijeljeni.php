@@ -72,7 +72,9 @@
                       <th>Potkategorija</th>
                       <th>Prioritet</th>
                       <th>Status</th>
+                      <th>Operater</th>
                       <th>Datum</th>
+                      <th>...</th>
                       <th>...</th>
                     </tr>
                   </thead>
@@ -86,7 +88,9 @@
                     <th>Potkategorija</th>
                     <th>Prioritet</th>
                     <th>Status</th>
+                    <th>Operater</th>
                     <th>Datum</th>
+                    <th>...</th>
                     <th>...</th>
                   </tr>
                   </tfoot>
@@ -126,6 +130,7 @@
 <!-- ./wrapper -->
 
 <?php include '../modals/modal_dodijeli.php'; ?>
+<?php include '../modals/modal_status.php'; ?>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -165,12 +170,16 @@
     $.ajax({
       url: "../backend/modul2/obrada_zahtjeva/popuni_tabelu.php",
       type: "GET",
+      data:{
+        prikazi_dodijeljene: true
+      },
       success: function(response){
         var zahtjevi = JSON.parse(response);
         var redovi = "";
         for(var i = 0; i < zahtjevi.length; i++){
 
           var obrada_link = "<a href=\"#\" onclick=\"modalDodijeli("+zahtjevi[i].id+")\" ><i class=\"fas fa-check\" ></i></a>";
+          var status_link = "<a href=\"#\" onclick=\"modalStatus("+zahtjevi[i].id+")\" ><i class=\"fas fa-edit\" ></i></a>";
 
           redovi += "<tr id=\"red_"+zahtjevi[i].id+"\" >";
           redovi += " <td>"+ zahtjevi[i].korisnik +"</td>";
@@ -178,8 +187,10 @@
           redovi += " <td>"+ zahtjevi[i].potkategorija +"</td>";
           redovi += " <td>"+ zahtjevi[i].prioritet +"</td>";
           redovi += " <td>"+ zahtjevi[i].status +"</td>";
+          redovi += " <td>"+ zahtjevi[i].operater +"</td>";
           redovi += " <td>"+ zahtjevi[i].datum +"</td>";
           redovi += " <td>"+ obrada_link +"</td>";
+          redovi += " <td>"+ status_link +"</td>";
           redovi += "</tr>";
         }
         $("#zahtjevi_tabela_body").html(redovi);
@@ -212,7 +223,36 @@
     $("#modal-dodijeli").modal('show');
   }
 
-  function poruka_uspjesno(){
+
+  function modalStatus(zahtjev_id){
+
+    $.ajax({
+      url: '../backend/modul2/obrada_zahtjeva/popuni_statuse.php',
+      type: 'GET',
+      data: {
+        zahtjev_id: zahtjev_id
+      },
+      success: function(response){
+        var statusi = JSON.parse(response);
+        var statusi_opt = "";
+        for(var i = 0; i < statusi.length; i++){
+          var st = statusi[i].naziv;
+          var id = statusi[i].id;
+          var sel = statusi[i].selected;
+          if(sel)
+            statusi_opt += "<option selected value=\""+id+"\" >"+st+"</option>";
+          else
+            statusi_opt += "<option value=\""+id+"\" >"+st+"</option>";
+        }
+        $("#zahtjev_id_hidden_status").val(zahtjev_id);
+        $("#status_select").html(statusi_opt);
+      }
+    });
+
+    $("#modal-status").modal('show');
+  }
+
+  function poruka_uspjesno(tekst){
     const Toast = Swal.mixin({
       toast: true,
       position: 'top-end',
@@ -222,7 +262,7 @@
 
     Toast.fire({
       icon: 'success',
-      title: 'Zahtjev dodijeljen operateru!'
+      title: tekst
     });
   }
 
@@ -241,7 +281,30 @@
         $("#modal-dodijeli").modal('hide');
         // $("#red_"+zahtjev_id).remove();
         popuni_tabelu();
-        poruka_uspjesno();
+        poruka_uspjesno("Zahtjev dodijeljen operateru!");
+      }
+    });
+  }
+
+  function promijeniStatus(){
+    var status_id = $("#status_select").val();
+    var zahtjev_id = $("#zahtjev_id_hidden_status").val();
+
+    $.ajax({
+      url: '../backend/modul2/obrada_zahtjeva/promijeni_status.php',
+      type: 'POST',
+      data: {
+        zahtjev_id: zahtjev_id,
+        status_id: status_id,
+      },
+      success: function(response){
+        $("#modal-status").modal('hide');
+        if(response == "OK"){
+          popuni_tabelu();
+          poruka_uspjesno("Uspješna promjena statusa!");
+        }else{
+          alert(response);
+        }
       }
     });
   }
