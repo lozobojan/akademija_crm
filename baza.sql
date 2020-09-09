@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 07, 2020 at 11:02 PM
+-- Generation Time: Sep 09, 2020 at 11:15 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.11
 
@@ -55,7 +55,6 @@ CREATE TABLE `korisnik` (
   `password` varchar(255) DEFAULT NULL,
   `uloga_id` int(11) DEFAULT NULL,
   `sektor_id` int(11) DEFAULT NULL,
-  `spec_id` int(11) DEFAULT NULL,
   `aktivan` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
 
@@ -63,10 +62,30 @@ CREATE TABLE `korisnik` (
 -- Dumping data for table `korisnik`
 --
 
-INSERT INTO `korisnik` (`id`, `ime`, `prezime`, `username`, `password`, `uloga_id`, `sektor_id`, `spec_id`, `aktivan`) VALUES
-(1, 'Bojan', 'Lozo', 'bojan', '827ccb0eea8a706c4c34a16891f84e7b', 1, NULL, NULL, 1),
-(2, 'Filip', 'Filipovic', 'filip', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1, 1),
-(3, 'Marko', 'Markovic', 'marko', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 2, 1);
+INSERT INTO `korisnik` (`id`, `ime`, `prezime`, `username`, `password`, `uloga_id`, `sektor_id`, `aktivan`) VALUES
+(1, 'Bojan', 'Lozo', 'bojan', '827ccb0eea8a706c4c34a16891f84e7b', 1, NULL, 1),
+(2, 'Filip', 'Filipovic', 'filip', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1),
+(3, 'Marko', 'Markovic', 'marko', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `korisnik_specijalizacija`
+--
+
+CREATE TABLE `korisnik_specijalizacija` (
+  `korisnik_id` int(11) NOT NULL,
+  `spec_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
+
+--
+-- Dumping data for table `korisnik_specijalizacija`
+--
+
+INSERT INTO `korisnik_specijalizacija` (`korisnik_id`, `spec_id`) VALUES
+(2, 1),
+(3, 1),
+(3, 2);
 
 -- --------------------------------------------------------
 
@@ -118,6 +137,14 @@ CREATE TABLE `sektor` (
   `naziv` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
 
+--
+-- Dumping data for table `sektor`
+--
+
+INSERT INTO `sektor` (`id`, `naziv`) VALUES
+(1, 'Sektor za podrsku'),
+(2, 'Sektor za prijavu kvara');
+
 -- --------------------------------------------------------
 
 --
@@ -128,6 +155,15 @@ CREATE TABLE `specijalizacija` (
   `id` int(11) NOT NULL,
   `naziv` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
+
+--
+-- Dumping data for table `specijalizacija`
+--
+
+INSERT INTO `specijalizacija` (`id`, `naziv`) VALUES
+(1, 'Internet'),
+(2, 'Telefonija'),
+(3, 'Televizija');
 
 -- --------------------------------------------------------
 
@@ -198,16 +234,16 @@ CREATE TABLE `zahtjev` (
 
 INSERT INTO `zahtjev` (`id`, `ime`, `prezime`, `pretplatnicki_broj`, `kategorija_id`, `potkategorija_id`, `opis`, `prioritet_id`, `telefon`, `mail`, `obavjestenje_saglasnost`, `jedinstveni_kod`, `za_korisnika`, `status_id`, `datum`) VALUES
 (1, 'Bojan', 'Lozo', 'ASDFRE123', 2, 1, 'NE RADI MI KONEKCIJA!!!', 1, '067363573', 'lozobojan@gmail.com', 1, NULL, NULL, 1, '2020-09-03 16:15:17'),
-(2, 'Marko', 'Markovic', 'ASCV12344', 1, 2, 'OPIS TEST ...', 2, '068555147', 'marko123@mail.com', 0, 'F8NO1X', NULL, 1, '2020-09-03 16:15:17'),
-(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', NULL, 1, '2020-09-03 16:15:17'),
-(4, 'Filip', 'Filipovic', 'ASD123', 1, 1, 'Aasasas Aasasas Aasasas Aasasas Aasasas ', 1, '069852147', 'filip@gmail.com', 1, '5RBRCB', NULL, 1, '2020-09-03 16:15:17'),
-(5, 'Marko', 'Markovic', '123SSS', 1, 2, 'ne radi ...', 1, '06877412', 'asasas@ffff.me', 1, 'MS4XHK', NULL, 1, '2020-09-03 16:15:17'),
-(6, 'Marko', 'Markovic', '123AAA', 1, 1, 'Aaasasasas SASAS', 1, '067885631', 'lll@mail.com', 1, 'U9T5I5', NULL, 1, '2020-09-03 16:15:17'),
+(2, 'Marko', 'Markovic', 'ASCV12344', 1, 2, 'OPIS TEST ...', 2, '068555147', 'marko123@mail.com', 0, 'F8NO1X', 3, 2, '2020-09-03 16:15:17'),
+(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', 3, 2, '2020-09-03 16:15:17'),
+(4, 'Filip', 'Filipovic', 'ASD123', 1, 1, 'Aasasas Aasasas Aasasas Aasasas Aasasas ', 1, '069852147', 'filip@gmail.com', 1, '5RBRCB', 2, 2, '2020-09-03 16:15:17'),
+(5, 'Marko', 'Markovic', '123SSS', 1, 2, 'ne radi ...', 1, '06877412', 'asasas@ffff.me', 1, 'MS4XHK', 3, 2, '2020-09-03 16:15:17'),
+(6, 'Marko', 'Markovic', '123AAA', 1, 1, 'Aaasasasas SASAS', 1, '067885631', 'lll@mail.com', 1, 'U9T5I5', 3, 2, '2020-09-03 16:15:17'),
 (7, 'AA', 'BB', 'CC', 1, 1, 'AAASSS', 1, '555888', 'sasasas', 1, 'BMDW5G', NULL, 1, '2020-09-03 16:15:17'),
-(8, 'SSS', 'DDD', 'ASSS', 1, 1, 'ASSASAS', 1, '3343343', 'dsdsds', 1, 'G6YCLC', NULL, 1, '2020-09-03 16:15:17'),
-(9, 'AAA', 'AAA', 'AAA', 1, 1, 'sasasasa', 1, '1212', 'q12121', 1, 'HGD167', NULL, 1, '2020-09-03 16:15:17'),
-(10, 'AAA', 'AA', 'AAAAAA', 1, 1, 'asasa', 1, 'sasasa', 'sasasa', 1, '30L99H', NULL, 1, '2020-09-03 16:15:17'),
-(11, 'TEst ', 'Kod', '123', 1, 1, 'sasasaa', 1, 'sasasasa', 'sasasa', 1, 'VRM812', NULL, 1, '2020-09-03 16:15:17');
+(8, 'SSS', 'DDD', 'ASSS', 1, 1, 'ASSASAS', 1, '3343343', 'dsdsds', 1, 'G6YCLC', 2, 2, '2020-09-03 16:15:17'),
+(9, 'AAA', 'AAA', 'AAA', 1, 1, 'sasasasa', 1, '1212', 'q12121', 1, 'HGD167', 2, 2, '2020-09-03 16:15:17'),
+(10, 'AAA', 'AA', 'AAAAAA', 1, 1, 'asasa', 1, 'sasasa', 'sasasa', 1, '30L99H', 2, 2, '2020-09-03 16:15:17'),
+(11, 'TEst ', 'Kod', '123', 1, 1, 'sasasaa', 1, 'sasasasa', 'sasasa', 1, 'VRM812', 2, 3, '2020-09-03 16:15:17');
 
 --
 -- Indexes for dumped tables
@@ -224,7 +260,16 @@ ALTER TABLE `kategorija`
 --
 ALTER TABLE `korisnik`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `uloga_id` (`uloga_id`);
+  ADD KEY `uloga_id` (`uloga_id`),
+  ADD KEY `sektor_id` (`sektor_id`);
+
+--
+-- Indexes for table `korisnik_specijalizacija`
+--
+ALTER TABLE `korisnik_specijalizacija`
+  ADD PRIMARY KEY (`korisnik_id`,`spec_id`),
+  ADD KEY `korisnik_id` (`korisnik_id`),
+  ADD KEY `spec_id` (`spec_id`);
 
 --
 -- Indexes for table `potkategorija`
@@ -299,13 +344,13 @@ ALTER TABLE `prioritet`
 -- AUTO_INCREMENT for table `sektor`
 --
 ALTER TABLE `sektor`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `specijalizacija`
 --
 ALTER TABLE `specijalizacija`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `status`
@@ -333,7 +378,15 @@ ALTER TABLE `zahtjev`
 -- Constraints for table `korisnik`
 --
 ALTER TABLE `korisnik`
-  ADD CONSTRAINT `korisnik_fk1` FOREIGN KEY (`uloga_id`) REFERENCES `uloga` (`id`);
+  ADD CONSTRAINT `korisnik_fk1` FOREIGN KEY (`uloga_id`) REFERENCES `uloga` (`id`),
+  ADD CONSTRAINT `korisnik_fk2` FOREIGN KEY (`sektor_id`) REFERENCES `sektor` (`id`);
+
+--
+-- Constraints for table `korisnik_specijalizacija`
+--
+ALTER TABLE `korisnik_specijalizacija`
+  ADD CONSTRAINT `korisnik_specijalizacija_fk1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`id`),
+  ADD CONSTRAINT `korisnik_specijalizacija_fk2` FOREIGN KEY (`spec_id`) REFERENCES `specijalizacija` (`id`);
 
 --
 -- Constraints for table `zahtjev`
