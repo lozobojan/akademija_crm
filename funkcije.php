@@ -1,13 +1,14 @@
 <?php
 	
-	function popuni_sifarnik($sifranik){
+	function popuni_sifarnik($sifranik, $sel = null){
 		global $dbconn;
 		$sql = "SELECT * FROM $sifranik ORDER BY naziv ASC ";
 		$res = mysqli_query($dbconn, $sql);
 		while($row = mysqli_fetch_assoc($res)){
 			$id_temp = $row['id'];
 			$naziv_temp = $row['naziv'];
-			echo "<option value=\"$id_temp\" >$naziv_temp</option>";
+			($sel == $id_temp) ? $selected = "selected" : $selected = "";
+			echo "<option value=\"$id_temp\" $selected >$naziv_temp</option>";
 		}
 	}
 
@@ -64,4 +65,67 @@
 		}
 	}
 
+	function saglasnostObavjestenje($zahtjev_id){
+		global $dbconn;
+		$sql = "SELECT obavjestenje_saglasnost FROM zahtjev WHERE id = $zahtjev_id";
+		$s = mysqli_fetch_row(mysqli_query($dbconn, $sql))[0];
+		return ($s == 1);
+	}
+
+	function statusObavjestenje($status_id){
+		global $dbconn;
+		$sql = "SELECT obavjestenje, obavjestenje_tekst FROM status WHERE id = $status_id";
+		$res = mysqli_query($dbconn, $sql);
+		$row = mysqli_fetch_assoc($res);
+		$ob = $row['obavjestenje'];
+		$txt = $row['obavjestenje_tekst'];
+		if($ob == 1){
+			return $txt;
+		}else{
+			return false;
+		}
+	}
+
+	function mailAdresaKorisnika($zahtjev_id){
+		global $dbconn;
+		return mysqli_fetch_row(mysqli_query($dbconn, "SELECT mail FROM zahtjev WHERE id = $zahtjev_id"))[0];
+	}
+
+	function obavijesti($zahtjev_id, $novi_status_id){
+		global $dbconn;
+		$saglasnost = saglasnostObavjestenje($zahtjev_id);
+		$obavjestenje = statusObavjestenje($novi_status_id);
+
+		if($saglasnost && $obavjestenje){
+			posaljiMail(mailAdresaKorisnika($zahtjev_id), $obavjestenje);
+		}
+
+	}
+
+	function posaljiMail($mail_adresa, $tekst){
+		global $mail;
+		try {
+		    // Server settings
+		    $mail->isSMTP();
+		    $mail->Host       = 'smtp.gmail.com';                    
+		    $mail->SMTPAuth   = true;                                  
+		    $mail->Username   = 'akademijatest2020@gmail.com';                   
+		    $mail->Password   = 'pass12345678';
+		    $mail->Port       = 587;
+
+		    //Recipients
+		    $mail->setFrom('crm_aplikacija@gmail.com', 'CRM Automatski mail');
+		    $mail->addAddress($mail_adresa);
+
+		    // Content
+		    $mail->isHTML(true);
+		    $mail->Subject = 'Obavjestenje o zahtjevu';
+		    $mail->Body    = $tekst;
+		    $mail->send();
+
+		    return true;
+		} catch (Exception $e) {
+		    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+		}
+	}
 ?>

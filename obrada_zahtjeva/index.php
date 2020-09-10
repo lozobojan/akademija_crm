@@ -170,8 +170,6 @@
         var redovi = "";
         for(var i = 0; i < zahtjevi.length; i++){
 
-          var obrada_link = "<a href=\"#\" onclick=\"modalDodijeli("+zahtjevi[i].id+")\" ><i class=\"fas fa-check\" ></i></a>";
-
           redovi += "<tr id=\"red_"+zahtjevi[i].id+"\" >";
           redovi += " <td>"+ zahtjevi[i].korisnik +"</td>";
           redovi += " <td>"+ zahtjevi[i].kategorija +"</td>";
@@ -179,7 +177,7 @@
           redovi += " <td>"+ zahtjevi[i].prioritet +"</td>";
           redovi += " <td>"+ zahtjevi[i].status +"</td>";
           redovi += " <td>"+ zahtjevi[i].datum +"</td>";
-          redovi += " <td>"+ obrada_link +"</td>";
+          redovi += " <td>"+ zahtjevi[i].link +"</td>";
           redovi += "</tr>";
         }
         $("#zahtjevi_tabela_body").html(redovi);

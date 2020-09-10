@@ -3,8 +3,9 @@
 	include '../../../connect.php';
 	include '../../../funkcije.php';
 
-	// privremeno
-	$korisnik_id = 1;
+	ini_set("display_errors", "on");
+
+	$korisnik_id = $_SESSION['prijava']['korisnik_id'];
 
 	$uloga_korisnika = uloga_korisnika($korisnik_id);
 	$uloga_id = $uloga_korisnika['id'];
@@ -64,6 +65,13 @@
 
 		$datum = date('d.m.Y [H:i]', strtotime($datum) );
 
+		$link = "";
+		if($uloga_id == 1){
+			$link = "<a href=\"#\" onclick=\"modalDodijeli(\"$id\")\" ><i class=\"fas fa-users\" ></i></a>";
+		}elseif($uloga_id == 2){
+			$link = "<a href=\"./detalji_zahtjeva.php?id=$id\" ><i class=\"fas fa-list-alt\" ></i></a>";
+		}
+
 		$niz_zahtjeva[] = 
 						[
 							'id' => $id,
@@ -73,7 +81,8 @@
 							'prioritet' => $prioritet,
 							'status' => $status,
 							'datum' => $datum,
-							'operater' => $operater
+							'operater' => $operater,
+							'link' => $link
 						];
 	}
 

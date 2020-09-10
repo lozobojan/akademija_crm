@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 09, 2020 at 11:15 PM
+-- Generation Time: Sep 10, 2020 at 07:28 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.11
 
@@ -173,17 +173,19 @@ INSERT INTO `specijalizacija` (`id`, `naziv`) VALUES
 
 CREATE TABLE `status` (
   `id` int(11) NOT NULL,
-  `naziv` varchar(255) DEFAULT NULL
+  `naziv` varchar(255) DEFAULT NULL,
+  `obavjestenje` int(11) DEFAULT 0 COMMENT 'da li status povlaci obavjestenje 1/0',
+  `obavjestenje_tekst` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
 
 --
 -- Dumping data for table `status`
 --
 
-INSERT INTO `status` (`id`, `naziv`) VALUES
-(1, 'Nedodijeljen'),
-(2, 'U obradi'),
-(3, 'Zavrsen');
+INSERT INTO `status` (`id`, `naziv`, `obavjestenje`, `obavjestenje_tekst`) VALUES
+(1, 'Nedodijeljen', 0, NULL),
+(2, 'U obradi', 0, NULL),
+(3, 'Zavrsen', 1, 'Vas zahtjev je uspjesno zavrsen.');
 
 -- --------------------------------------------------------
 
@@ -225,25 +227,28 @@ CREATE TABLE `zahtjev` (
   `jedinstveni_kod` varchar(255) DEFAULT NULL,
   `za_korisnika` int(11) DEFAULT NULL,
   `status_id` int(11) DEFAULT 1,
-  `datum` timestamp NULL DEFAULT current_timestamp()
+  `datum` timestamp NULL DEFAULT current_timestamp(),
+  `komentar_operatera` text DEFAULT NULL,
+  `promijenio_status` int(11) DEFAULT NULL COMMENT 'id korisnika koji je izvrsio poslednju promjenu statusa',
+  `dodao_komentar` int(11) DEFAULT NULL COMMENT 'id korisnika koji je poslednji dodao komentar'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
 
 --
 -- Dumping data for table `zahtjev`
 --
 
-INSERT INTO `zahtjev` (`id`, `ime`, `prezime`, `pretplatnicki_broj`, `kategorija_id`, `potkategorija_id`, `opis`, `prioritet_id`, `telefon`, `mail`, `obavjestenje_saglasnost`, `jedinstveni_kod`, `za_korisnika`, `status_id`, `datum`) VALUES
-(1, 'Bojan', 'Lozo', 'ASDFRE123', 2, 1, 'NE RADI MI KONEKCIJA!!!', 1, '067363573', 'lozobojan@gmail.com', 1, NULL, NULL, 1, '2020-09-03 16:15:17'),
-(2, 'Marko', 'Markovic', 'ASCV12344', 1, 2, 'OPIS TEST ...', 2, '068555147', 'marko123@mail.com', 0, 'F8NO1X', 3, 2, '2020-09-03 16:15:17'),
-(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', 3, 2, '2020-09-03 16:15:17'),
-(4, 'Filip', 'Filipovic', 'ASD123', 1, 1, 'Aasasas Aasasas Aasasas Aasasas Aasasas ', 1, '069852147', 'filip@gmail.com', 1, '5RBRCB', 2, 2, '2020-09-03 16:15:17'),
-(5, 'Marko', 'Markovic', '123SSS', 1, 2, 'ne radi ...', 1, '06877412', 'asasas@ffff.me', 1, 'MS4XHK', 3, 2, '2020-09-03 16:15:17'),
-(6, 'Marko', 'Markovic', '123AAA', 1, 1, 'Aaasasasas SASAS', 1, '067885631', 'lll@mail.com', 1, 'U9T5I5', 3, 2, '2020-09-03 16:15:17'),
-(7, 'AA', 'BB', 'CC', 1, 1, 'AAASSS', 1, '555888', 'sasasas', 1, 'BMDW5G', NULL, 1, '2020-09-03 16:15:17'),
-(8, 'SSS', 'DDD', 'ASSS', 1, 1, 'ASSASAS', 1, '3343343', 'dsdsds', 1, 'G6YCLC', 2, 2, '2020-09-03 16:15:17'),
-(9, 'AAA', 'AAA', 'AAA', 1, 1, 'sasasasa', 1, '1212', 'q12121', 1, 'HGD167', 2, 2, '2020-09-03 16:15:17'),
-(10, 'AAA', 'AA', 'AAAAAA', 1, 1, 'asasa', 1, 'sasasa', 'sasasa', 1, '30L99H', 2, 2, '2020-09-03 16:15:17'),
-(11, 'TEst ', 'Kod', '123', 1, 1, 'sasasaa', 1, 'sasasasa', 'sasasa', 1, 'VRM812', 2, 3, '2020-09-03 16:15:17');
+INSERT INTO `zahtjev` (`id`, `ime`, `prezime`, `pretplatnicki_broj`, `kategorija_id`, `potkategorija_id`, `opis`, `prioritet_id`, `telefon`, `mail`, `obavjestenje_saglasnost`, `jedinstveni_kod`, `za_korisnika`, `status_id`, `datum`, `komentar_operatera`, `promijenio_status`, `dodao_komentar`) VALUES
+(1, 'Bojan', 'Lozo', 'ASDFRE123', 2, 1, 'NE RADI MI KONEKCIJA!!!', 1, '067363573', 'lozobojan@gmail.com', 1, '786YTH', NULL, 2, '2020-09-03 16:15:17', NULL, 2, NULL),
+(2, 'Marko', 'Markovic', 'ASCV12344', 1, 2, 'OPIS TEST ...', 2, '068555147', 'marko123@mail.com', 0, 'F8NO1X', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(4, 'Filip', 'Filipovic', 'ASD123', 1, 1, 'Aasasas Aasasas Aasasas Aasasas Aasasas ', 1, '069852147', 'filip@gmail.com', 1, '5RBRCB', 2, 3, '2020-09-03 16:15:17', 'Test zavrseno 22', 2, 2),
+(5, 'Marko', 'Markovic', '123SSS', 1, 2, 'ne radi ...', 1, '06877412', 'asasas@ffff.me', 1, 'MS4XHK', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(6, 'Marko', 'Markovic', '123AAA', 1, 1, 'Aaasasasas SASAS', 1, '067885631', 'lll@mail.com', 1, 'U9T5I5', 3, 3, '2020-09-03 16:15:17', 'Popravio sam to i to .... ', 2, 2),
+(7, 'AA', 'BB', 'CC', 1, 1, 'AAASSS', 1, '555888', 'sasasas', 1, 'BMDW5G', NULL, 1, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(8, 'SSS', 'DDD', 'ASSS', 1, 1, 'ASSASAS', 1, '3343343', 'dsdsds', 1, 'G6YCLC', 2, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(9, 'AAA', 'AAA', 'AAA', 1, 1, 'sasasasa', 1, '1212', 'q12121', 1, 'HGD167', 2, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(10, 'AAA', 'AA', 'AAAAAA', 1, 1, 'asasa', 1, 'sasasa', 'lozobojan@gmail.com', 1, '30L99H', 2, 3, '2020-09-03 16:15:17', NULL, 2, NULL),
+(11, 'TEst ', 'Kod', '123', 1, 1, 'sasasaa', 1, 'sasasasa', 'sasasa', 1, 'VRM812', 2, 3, '2020-09-03 16:15:17', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -316,7 +321,9 @@ ALTER TABLE `zahtjev`
   ADD KEY `potkategorija_id` (`potkategorija_id`),
   ADD KEY `prioritet_id` (`prioritet_id`),
   ADD KEY `za_korisnika` (`za_korisnika`),
-  ADD KEY `status_id` (`status_id`);
+  ADD KEY `status_id` (`status_id`),
+  ADD KEY `promijenio_status` (`promijenio_status`),
+  ADD KEY `dodao_komentar` (`dodao_komentar`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -396,7 +403,9 @@ ALTER TABLE `zahtjev`
   ADD CONSTRAINT `zahtjev_fk2` FOREIGN KEY (`potkategorija_id`) REFERENCES `potkategorija` (`id`),
   ADD CONSTRAINT `zahtjev_fk3` FOREIGN KEY (`prioritet_id`) REFERENCES `prioritet` (`id`),
   ADD CONSTRAINT `zahtjev_fk4` FOREIGN KEY (`za_korisnika`) REFERENCES `korisnik` (`id`),
-  ADD CONSTRAINT `zahtjev_fk5` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`);
+  ADD CONSTRAINT `zahtjev_fk5` FOREIGN KEY (`status_id`) REFERENCES `status` (`id`),
+  ADD CONSTRAINT `zahtjev_fk6` FOREIGN KEY (`promijenio_status`) REFERENCES `korisnik` (`id`),
+  ADD CONSTRAINT `zahtjev_fk7` FOREIGN KEY (`dodao_komentar`) REFERENCES `korisnik` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -178,7 +178,7 @@
         var redovi = "";
         for(var i = 0; i < zahtjevi.length; i++){
 
-          var obrada_link = "<a href=\"#\" onclick=\"modalDodijeli("+zahtjevi[i].id+")\" ><i class=\"fas fa-check\" ></i></a>";
+          var obrada_link = "<a href=\"#\" onclick=\"modalDodijeli("+zahtjevi[i].id+")\" ><i class=\"fas fa-users\" ></i></a>";
           var status_link = "<a href=\"#\" onclick=\"modalStatus("+zahtjevi[i].id+")\" ><i class=\"fas fa-edit\" ></i></a>";
 
           redovi += "<tr id=\"red_"+zahtjevi[i].id+"\" >";
