@@ -1,5 +1,6 @@
 <?php
-
+  
+  ini_set("display_errors", "on");
   include '../connect.php';
   include '../funkcije.php';
 
@@ -126,6 +127,8 @@
 <!-- ./wrapper -->
 
 <?php include '../modals/modal_dodijeli.php'; ?>
+<?php include '../modals/modal_izvjestaj1.php'; ?>
+<?php include '../modals/modal_izvjestaj2.php'; ?>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -242,6 +245,10 @@
         poruka_uspjesno();
       }
     });
+  }
+
+  function submitFrm(frm_id){
+    $('#'+frm_id).submit();
   }
 
 </script>

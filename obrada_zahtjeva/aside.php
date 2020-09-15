@@ -34,7 +34,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="./index.php" class="nav-link">
+              <a href="./index.php" class="nav-link "> <!-- active -->
                 <i class="far fa-circle nav-icon"></i>
                 <p>Zahtjevi za dodjelu</p>
               </a>
@@ -47,15 +47,31 @@
             </li>
           </ul>
         </li>
-        <!-- <li class="nav-item">
+        
+        <li class="nav-item has-treeview">
           <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-th"></i>
+            <i class="nav-icon fas fa-list-alt"></i>
             <p>
-              Simple Link
-              <span class="right badge badge-danger">New</span>
+              Izvještaji
+              <i class="right fas fa-angle-left"></i>
             </p>
           </a>
-        </li> -->
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="#" data-toggle="modal" data-target="#modal-izvjestaj1" class="nav-link ">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Učinak operatera</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#" data-toggle="modal" data-target="#modal-izvjestaj2" class="nav-link ">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Potkategorije</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
