@@ -22,10 +22,9 @@
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <!-- Add icons to the links using the .nav-icon class
-             with font-awesome or any other icon font library -->
+        <?php $active_link == 'obrada_zahtjeva' ? $active1 = 'active' :  $active1 = ''; ?>
         <li class="nav-item has-treeview menu-open">
-          <a href="#" class="nav-link active">
+          <a href="#" class="nav-link <?=$active1?> ">
             <i class="nav-icon fas fa-tachometer-alt"></i>
             <p>
               Obrada zahtjeva
@@ -34,13 +33,15 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="./index.php" class="nav-link "> <!-- active -->
+              <?php $active_sublink == 'zahtjevi_za_dodjelu' ? $active2 = 'active' :  $active2 = ''; ?>
+              <a href="./index.php" class="nav-link <?=$active2?> "> <!-- active -->
                 <i class="far fa-circle nav-icon"></i>
                 <p>Zahtjevi za dodjelu</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./dodijeljeni.php" class="nav-link">
+              <?php $active_sublink == 'dodijeljeni_zahtjevi' ? $active2 = 'active' :  $active2 = ''; ?>
+              <a href="./dodijeljeni.php" class="nav-link <?=$active2?>">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Dodijeljeni zahtjevi</p>
               </a>
@@ -48,7 +49,16 @@
           </ul>
         </li>
         
-        <li class="nav-item has-treeview">
+        <?php
+
+          $mdl1 = pristupModulu('izvjestaj_o_ucinku_operatera', $_SESSION['prijava']['korisnik_id']);
+          $mdl2 = pristupModulu('izvjestaj_o_potkategorijama', $_SESSION['prijava']['korisnik_id']);
+          $dugme_izvjestaji_klasa = "";
+          if(!$mdl1 && !$mdl2)
+            $dugme_izvjestaji_klasa = "d-none";
+        ?>
+
+        <li class="nav-item has-treeview <?=$dugme_izvjestaji_klasa?> ">
           <a href="#" class="nav-link">
             <i class="nav-icon fas fa-list-alt"></i>
             <p>
@@ -57,20 +67,49 @@
             </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="#" data-toggle="modal" data-target="#modal-izvjestaj1" class="nav-link ">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Učinak operatera</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" data-toggle="modal" data-target="#modal-izvjestaj2" class="nav-link ">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Potkategorije</p>
-              </a>
-            </li>
+            <?php  
+
+              if(pristupModulu('izvjestaj_o_ucinku_operatera', $_SESSION['prijava']['korisnik_id'])){
+                echo '
+                <li class="nav-item">
+                  <a href="#" data-toggle="modal" data-target="#modal-izvjestaj1" class="nav-link ">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Učinak operatera</p>
+                  </a>
+                </li>
+                ';
+              }
+
+              if(pristupModulu('izvjestaj_o_potkategorijama', $_SESSION['prijava']['korisnik_id'])){
+                echo '
+                <li class="nav-item">
+                  <a href="#" data-toggle="modal" data-target="#modal-izvjestaj2" class="nav-link ">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Potkategorije</p>
+                  </a>
+                </li>
+                ';
+              }
+            ?>
           </ul>
         </li>
+
+        <?php 
+          $active_link == 'kontrola_pristupa' ? $active3 = 'active' :  $active3 = ''; 
+          if(pristupModulu('kontrola_pristupa', $_SESSION['prijava']['korisnik_id'])){
+            echo '
+            <li class="nav-item">
+              <a href="../kontrola_pristupa/index.php" class="nav-link '.$active3.'">
+              <i class="nav-icon fas fa-lock"></i>
+              <p>
+                Kontrola pristupa
+              </p>
+              </a>
+            </li>';
+          }
+        ?>
+
+        
 
       </ul>
     </nav>

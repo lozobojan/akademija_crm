@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2020 at 07:28 PM
+-- Generation Time: Sep 17, 2020 at 08:09 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.11
 
@@ -70,6 +70,29 @@ INSERT INTO `korisnik` (`id`, `ime`, `prezime`, `username`, `password`, `uloga_i
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `korisnik_modul`
+--
+
+CREATE TABLE `korisnik_modul` (
+  `id` int(11) NOT NULL,
+  `korisnik_id` int(11) DEFAULT NULL,
+  `modul_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
+
+--
+-- Dumping data for table `korisnik_modul`
+--
+
+INSERT INTO `korisnik_modul` (`id`, `korisnik_id`, `modul_id`) VALUES
+(1, 1, 1),
+(2, 1, 2),
+(3, 1, 3),
+(4, 1, 4),
+(9, 2, 3);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `korisnik_specijalizacija`
 --
 
@@ -86,6 +109,28 @@ INSERT INTO `korisnik_specijalizacija` (`korisnik_id`, `spec_id`) VALUES
 (2, 1),
 (3, 1),
 (3, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `modul`
+--
+
+CREATE TABLE `modul` (
+  `id` int(11) NOT NULL,
+  `naziv` varchar(255) DEFAULT NULL,
+  `sistemski_naziv` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
+
+--
+-- Dumping data for table `modul`
+--
+
+INSERT INTO `modul` (`id`, `naziv`, `sistemski_naziv`) VALUES
+(1, 'Izvjestaj o ucinku operatera', 'izvjestaj_o_ucinku_operatera'),
+(2, 'Izvjestaj o potkategorijama', 'izvjestaj_o_potkategorijama'),
+(3, 'Zahtjevi za dodjelu', 'zahtjevi_za_dodjelu'),
+(4, 'Kontrola pristupa', 'kontrola_pristupa');
 
 -- --------------------------------------------------------
 
@@ -240,7 +285,7 @@ CREATE TABLE `zahtjev` (
 INSERT INTO `zahtjev` (`id`, `ime`, `prezime`, `pretplatnicki_broj`, `kategorija_id`, `potkategorija_id`, `opis`, `prioritet_id`, `telefon`, `mail`, `obavjestenje_saglasnost`, `jedinstveni_kod`, `za_korisnika`, `status_id`, `datum`, `komentar_operatera`, `promijenio_status`, `dodao_komentar`) VALUES
 (1, 'Bojan', 'Lozo', 'ASDFRE123', 2, 1, 'NE RADI MI KONEKCIJA!!!', 1, '067363573', 'lozobojan@gmail.com', 1, '786YTH', NULL, 2, '2020-09-03 16:15:17', NULL, 2, NULL),
 (2, 'Marko', 'Markovic', 'ASCV12344', 1, 2, 'OPIS TEST ...', 2, '068555147', 'marko123@mail.com', 0, 'F8NO1X', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
-(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
+(3, 'Janko', 'Jankovic', 'ASC34456', 1, 2, 'AAAAAAAAAAAA', 1, '067858522', 'markojanko@mail.com', 1, 'W4IDP6', 3, 3, '2020-09-03 16:15:17', 'test promjena', 3, 3),
 (4, 'Filip', 'Filipovic', 'ASD123', 1, 1, 'Aasasas Aasasas Aasasas Aasasas Aasasas ', 1, '069852147', 'filip@gmail.com', 1, '5RBRCB', 2, 3, '2020-09-03 16:15:17', 'Test zavrseno 22', 2, 2),
 (5, 'Marko', 'Markovic', '123SSS', 1, 2, 'ne radi ...', 1, '06877412', 'asasas@ffff.me', 1, 'MS4XHK', 3, 2, '2020-09-03 16:15:17', NULL, NULL, NULL),
 (6, 'Marko', 'Markovic', '123AAA', 1, 1, 'Aaasasasas SASAS', 1, '067885631', 'lll@mail.com', 1, 'U9T5I5', 3, 3, '2020-09-03 16:15:17', 'Popravio sam to i to .... ', 2, 2),
@@ -269,12 +314,27 @@ ALTER TABLE `korisnik`
   ADD KEY `sektor_id` (`sektor_id`);
 
 --
+-- Indexes for table `korisnik_modul`
+--
+ALTER TABLE `korisnik_modul`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `korisnik_id` (`korisnik_id`),
+  ADD KEY `modul_id` (`modul_id`);
+
+--
 -- Indexes for table `korisnik_specijalizacija`
 --
 ALTER TABLE `korisnik_specijalizacija`
   ADD PRIMARY KEY (`korisnik_id`,`spec_id`),
   ADD KEY `korisnik_id` (`korisnik_id`),
   ADD KEY `spec_id` (`spec_id`);
+
+--
+-- Indexes for table `modul`
+--
+ALTER TABLE `modul`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `sistemski_naziv` (`sistemski_naziv`);
 
 --
 -- Indexes for table `potkategorija`
@@ -336,6 +396,18 @@ ALTER TABLE `kategorija`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `korisnik_modul`
+--
+ALTER TABLE `korisnik_modul`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `modul`
+--
+ALTER TABLE `modul`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `potkategorija`
 --
 ALTER TABLE `potkategorija`
@@ -387,6 +459,13 @@ ALTER TABLE `zahtjev`
 ALTER TABLE `korisnik`
   ADD CONSTRAINT `korisnik_fk1` FOREIGN KEY (`uloga_id`) REFERENCES `uloga` (`id`),
   ADD CONSTRAINT `korisnik_fk2` FOREIGN KEY (`sektor_id`) REFERENCES `sektor` (`id`);
+
+--
+-- Constraints for table `korisnik_modul`
+--
+ALTER TABLE `korisnik_modul`
+  ADD CONSTRAINT `korisnik_modul_fk1` FOREIGN KEY (`korisnik_id`) REFERENCES `korisnik` (`id`),
+  ADD CONSTRAINT `korisnik_modul_fk2` FOREIGN KEY (`modul_id`) REFERENCES `modul` (`id`);
 
 --
 -- Constraints for table `korisnik_specijalizacija`

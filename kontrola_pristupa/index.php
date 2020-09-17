@@ -8,8 +8,8 @@
   autorizacija();
   $korisnik = prijavljeni_korisnik();
 
-  $active_link = "obrada_zahtjeva";
-  $active_sublink = "zahtjevi_za_dodjelu";
+  $active_link = "kontrola_pristupa";
+  $active_sublink = "";
 
 ?>
 <!DOCTYPE html>
@@ -37,8 +37,8 @@
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
 
-  <?php  include './nav.php';   ?>  
-  <?php  include './aside.php';   ?>  
+  <?php  include '../obrada_zahtjeva/nav.php';   ?>  
+  <?php  include '../obrada_zahtjeva/aside.php';   ?>  
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -47,12 +47,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0 text-dark">Obrada zahtjeva</h1>
+            <h1 class="m-0 text-dark">Kontrola pristupa</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="../login.html">Prijava</a></li>
-              <li class="breadcrumb-item active">Obrada zahtjeva</li>
+              <li class="breadcrumb-item active">Kontrola pristupa</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -68,30 +68,76 @@
           <div class="col-lg-12">
             <div class="card card-primary card-outline">
               <div class="card-body">
-                <table id="zahtjevi_tabela" class="table table-bordered table-hover">
+                <table id="pristup_tabela" class="table table-bordered table-hover">
                   <thead>
                     <tr>
                       <th>Korisnik</th>
-                      <th>Kategorija</th>
-                      <th>Potkategorija</th>
-                      <th>Prioritet</th>
-                      <th>Status</th>
-                      <th>Datum</th>
-                      <th>...</th>
+                      <!-- dinamicki prikazujemo naslove tabele, tj module -->
+                      <?php
+                        $niz_modula = [];
+                        $sql_moduli = "SELECT * FROM modul ORDER BY id";
+                        $res_moduli = mysqli_query($dbconn, $sql_moduli);
+                        $moduli_th = "";
+                        while($row_moduli = mysqli_fetch_assoc($res_moduli)){
+                          $modul_naziv = $row_moduli['sistemski_naziv'];
+                          $modul_id = $row_moduli['id'];
+                          $niz_modula[] = ['naziv' => $modul_naziv, 'id' => $modul_id ];
+                          $moduli_th .= "<th>".$row_moduli['naziv']."</th>";
+                        }
+                        echo $moduli_th;
+                      ?>
                     </tr>
                   </thead>
-                  <tbody id="zahtjevi_tabela_body">
-                    
+                  <tbody id="pristup_tabela_body">
+                    <?php
+
+                      $redovi = "";
+                      $sql_kor = "SELECT id, concat(ime, ' ', prezime) as korisnik from korisnik";
+                      $res_kor = mysqli_query($dbconn, $sql_kor);
+
+                      while($row_kor = mysqli_fetch_assoc($res_kor) ){
+
+                        $kor_id = $row_kor['id'];
+                        $kor_naziv = $row_kor['korisnik'];
+
+                        $redovi_temp = "";
+                        for($i=0;$i<count($niz_modula); $i++){
+
+                          $modul_temp = $niz_modula[$i]['naziv'];
+                          $modul_temp_id = $niz_modula[$i]['id'];
+                          
+                          if(pristupModulu($modul_temp, $kor_id)){
+                            $checked = "checked";
+                          }else{
+                            $checked = "";
+                          }
+
+                          $id_temp = "customSwitch_$kor_id"."_".$modul_temp_id;
+                          $on_change = "onchange=\"dodijeliPrava($kor_id, $modul_temp_id)\" ";
+                          $redovi_temp .= 
+                          '<td>
+                            <div class="custom-control custom-switch">
+                              <input type="checkbox" '.$checked.' class="custom-control-input" id="'.$id_temp.'" '.$on_change.' >
+                              <label class="custom-control-label" for="'.$id_temp.'"></label>
+                            </div>
+                          </td>';
+                          
+                        }
+
+                        $redovi .= "<tr>";
+                        $redovi .= "  <td>$kor_naziv</td>";
+                        $redovi .=    $redovi_temp;
+                        $redovi .= "</tr>";
+
+                      }
+
+                      echo $redovi;
+                    ?>
                   </tbody>
                   <tfoot>
                   <tr>
                     <th>Korisnik</th>
-                    <th>Kategorija</th>
-                    <th>Potkategorija</th>
-                    <th>Prioritet</th>
-                    <th>Status</th>
-                    <th>Datum</th>
-                    <th>...</th>
+                    <?=$moduli_th?>
                   </tr>
                   </tfoot>
                 </table>
@@ -117,11 +163,10 @@
   </aside>
   <!-- /.control-sidebar -->
 
-  <?php include './footer.php'; ?>
+  <?php include '../obrada_zahtjeva/footer.php'; ?>
 </div>
 <!-- ./wrapper -->
 
-<?php include '../modals/modal_dodijeli.php'; ?>
 <?php include '../modals/modal_izvjestaj1.php'; ?>
 <?php include '../modals/modal_izvjestaj2.php'; ?>
 
@@ -143,39 +188,30 @@
 
 <script type="text/javascript">
   
-  $(function () {
-    
-    popuni_tabelu();  
-    inicijalizuj_tabelu();
+  function dodijeliPrava(korisnik_id, modul_id){
 
-  });
+    var checked = $("#"+"customSwitch_"+korisnik_id+"_"+modul_id).is(':checked');
 
-  function popuni_tabelu(){
     $.ajax({
-      url: "../backend/modul2/obrada_zahtjeva/popuni_tabelu.php",
-      type: "GET",
+      url: "../backend/modul5/kontrola_pristupa/dodijeli_pravo.php",
+      type: "POST",
+      data: {
+        korisnik_id: korisnik_id,
+        modul_id: modul_id,
+        pravo: checked
+      },
       success: function(response){
-        var zahtjevi = JSON.parse(response);
-        var redovi = "";
-        for(var i = 0; i < zahtjevi.length; i++){
-
-          redovi += "<tr id=\"red_"+zahtjevi[i].id+"\" >";
-          redovi += " <td>"+ zahtjevi[i].korisnik +"</td>";
-          redovi += " <td>"+ zahtjevi[i].kategorija +"</td>";
-          redovi += " <td>"+ zahtjevi[i].potkategorija +"</td>";
-          redovi += " <td>"+ zahtjevi[i].prioritet +"</td>";
-          redovi += " <td>"+ zahtjevi[i].status +"</td>";
-          redovi += " <td>"+ zahtjevi[i].datum +"</td>";
-          redovi += " <td>"+ zahtjevi[i].link +"</td>";
-          redovi += "</tr>";
+        if(response == "OK"){
+          poruka_uspjesno("Uspješna dodijela prava!");
+        }else{
+          alert(response);
         }
-        $("#zahtjevi_tabela_body").html(redovi);
       }
     });
+
   }
 
 </script>
-<!-- zajednicke f.je -->
 <script type="text/javascript" src="../js/funkcije.js"></script>
 </body>
 </html>

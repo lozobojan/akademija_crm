@@ -3,6 +3,8 @@
 	include '../../connect.php';
 	include '../../funkcije.php';
 
+	autorizacija();
+
 	// Include the main TCPDF library (search for installation path).
 	require_once('../../tcpdf/examples/tcpdf_include.php');
 

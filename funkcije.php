@@ -128,4 +128,15 @@
 		    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
 		}
 	}
+
+	function pristupModulu($sistemski_naziv, $korisnik_id){
+		global $dbconn;
+		$sql = "
+				SELECT count(*) FROM korisnik_modul 
+				WHERE korisnik_id = $korisnik_id 
+				AND modul_id = (SELECT id FROM modul WHERE sistemski_naziv = '$sistemski_naziv' )
+			  ";
+		$cnt = mysqli_fetch_row(mysqli_query($dbconn, $sql))[0];
+		return ($cnt > 0);
+	}
 ?>

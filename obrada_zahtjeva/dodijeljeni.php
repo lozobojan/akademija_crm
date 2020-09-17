@@ -7,6 +7,9 @@
   autorizacija();
   $korisnik = prijavljeni_korisnik();
 
+  $active_link = "obrada_zahtjeva";
+  $active_sublink = "dodijeljeni_zahtjevi";
+
 ?>
 <!DOCTYPE html>
 
@@ -117,20 +120,16 @@
   </aside>
   <!-- /.control-sidebar -->
 
-  <!-- Main Footer -->
-  <footer class="main-footer">
-    <!-- To the right -->
-    <div class="float-right d-none d-sm-inline">
-      Anything you want
-    </div>
-    <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-  </footer>
+  <?php include './footer.php'; ?>
+  
 </div>
 <!-- ./wrapper -->
 
 <?php include '../modals/modal_dodijeli.php'; ?>
 <?php include '../modals/modal_status.php'; ?>
+
+<?php include '../modals/modal_izvjestaj1.php'; ?>
+<?php include '../modals/modal_izvjestaj2.php'; ?>
 
 <!-- REQUIRED SCRIPTS -->
 
@@ -153,16 +152,7 @@
   $(function () {
     
     popuni_tabelu();  
-
-    $('#zahtjevi_tabela').DataTable({
-      "paging": true,
-      "lengthChange": true,
-      "searching": true,
-      "ordering": true,
-      "info": true,
-      "autoWidth": false,
-      "responsive": true,
-    });
+    inicijalizuj_tabelu();
 
   });
 
@@ -198,32 +188,6 @@
     });
   }
 
-  function modalDodijeli(zahtjev_id){
-
-    $.ajax({
-      url: '../backend/modul2/obrada_zahtjeva/popuni_operatere.php',
-      type: 'GET',
-      data: {
-        zahtjev_id: zahtjev_id
-      },
-      success: function(response){
-        var operateri = JSON.parse(response);
-        var operateri_opt = "";
-        for(var i = 0; i < operateri.length; i++){
-          var op = operateri[i].ime;
-          var id = operateri[i].id;
-          var cnt = operateri[i].cnt;
-          operateri_opt += "<option value=\""+id+"\" >"+op+" ("+cnt+" zahtjeva)</option>";
-        }
-        $("#zahtjev_id_hidden").val(zahtjev_id);
-        $("#operater_select").html(operateri_opt);
-      }
-    });
-
-    $("#modal-dodijeli").modal('show');
-  }
-
-
   function modalStatus(zahtjev_id){
 
     $.ajax({
@@ -252,40 +216,6 @@
     $("#modal-status").modal('show');
   }
 
-  function poruka_uspjesno(tekst){
-    const Toast = Swal.mixin({
-      toast: true,
-      position: 'top-end',
-      showConfirmButton: false,
-      timer: 3000
-    });
-
-    Toast.fire({
-      icon: 'success',
-      title: tekst
-    });
-  }
-
-  function dodijeliZahtjev(){
-    var operater_id = $("#operater_select").val();
-    var zahtjev_id = $("#zahtjev_id_hidden").val();
-
-    $.ajax({
-      url: '../backend/modul2/obrada_zahtjeva/dodijeli_zahtjev.php',
-      type: 'POST',
-      data: {
-        zahtjev_id: zahtjev_id,
-        operater_id: operater_id,
-      },
-      success: function(response){
-        $("#modal-dodijeli").modal('hide');
-        // $("#red_"+zahtjev_id).remove();
-        popuni_tabelu();
-        poruka_uspjesno("Zahtjev dodijeljen operateru!");
-      }
-    });
-  }
-
   function promijeniStatus(){
     var status_id = $("#status_select").val();
     var zahtjev_id = $("#zahtjev_id_hidden_status").val();
@@ -310,5 +240,7 @@
   }
 
 </script>
+<!-- zajednicke f.je -->
+<script type="text/javascript" src="../js/funkcije.js"></script>
 </body>
 </html>

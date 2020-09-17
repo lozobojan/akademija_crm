@@ -67,7 +67,7 @@
 
 		$link = "";
 		if($uloga_id == 1){
-			$link = "<a href=\"#\" onclick=\"modalDodijeli(\"$id\")\" ><i class=\"fas fa-users\" ></i></a>";
+			$link = "<a href=\"#\" onclick=\"modalDodijeli($id)\" ><i class=\"fas fa-users\" ></i></a>";
 		}elseif($uloga_id == 2){
 			$link = "<a href=\"./detalji_zahtjeva.php?id=$id\" ><i class=\"fas fa-list-alt\" ></i></a>";
 		}
