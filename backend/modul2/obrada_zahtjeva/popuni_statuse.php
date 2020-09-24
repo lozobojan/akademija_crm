@@ -10,7 +10,7 @@
 	$sql_status = "SELECT status_id FROM zahtjev WHERE id = $zahtjev_id";
 	$trenutni_status = mysqli_fetch_row(mysqli_query($dbconn, $sql_status))[0];
 
-	$sql = " SELECT * FROM status ORDER BY id ASC ";
+	$sql = " SELECT * FROM status WHERE aktivno = 1 ORDER BY id ASC ";
 	$res = mysqli_query($dbconn, $sql);
 	$statusi = [];
 
