@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 17, 2020 at 08:09 PM
+-- Generation Time: Sep 29, 2020 at 08:32 PM
 -- Server version: 10.4.8-MariaDB
 -- PHP Version: 7.3.11
 
@@ -65,7 +65,8 @@ CREATE TABLE `korisnik` (
 INSERT INTO `korisnik` (`id`, `ime`, `prezime`, `username`, `password`, `uloga_id`, `sektor_id`, `aktivan`) VALUES
 (1, 'Bojan', 'Lozo', 'bojan', '827ccb0eea8a706c4c34a16891f84e7b', 1, NULL, 1),
 (2, 'Filip', 'Filipovic', 'filip', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1),
-(3, 'Marko', 'Markovic', 'marko', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1);
+(3, 'Marko', 'Markovic', 'marko', '827ccb0eea8a706c4c34a16891f84e7b', 2, 1, 1),
+(4, 'Goran', 'Goranovic', 'goran', '52ddd9ff1e957a1e6b15d329d8cefee7', 2, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,8 @@ INSERT INTO `korisnik_modul` (`id`, `korisnik_id`, `modul_id`) VALUES
 (2, 1, 2),
 (3, 1, 3),
 (4, 1, 4),
-(9, 2, 3);
+(5, 1, 5),
+(11, 1, 6);
 
 -- --------------------------------------------------------
 
@@ -108,7 +110,9 @@ CREATE TABLE `korisnik_specijalizacija` (
 INSERT INTO `korisnik_specijalizacija` (`korisnik_id`, `spec_id`) VALUES
 (2, 1),
 (3, 1),
-(3, 2);
+(3, 2),
+(4, 2),
+(4, 3);
 
 -- --------------------------------------------------------
 
@@ -130,7 +134,9 @@ INSERT INTO `modul` (`id`, `naziv`, `sistemski_naziv`) VALUES
 (1, 'Izvjestaj o ucinku operatera', 'izvjestaj_o_ucinku_operatera'),
 (2, 'Izvjestaj o potkategorijama', 'izvjestaj_o_potkategorijama'),
 (3, 'Zahtjevi za dodjelu', 'zahtjevi_za_dodjelu'),
-(4, 'Kontrola pristupa', 'kontrola_pristupa');
+(4, 'Kontrola pristupa', 'kontrola_pristupa'),
+(5, 'Admin. statusa', 'administracija_statusa'),
+(6, 'Admin. korisnika', 'administracija_korisnika');
 
 -- --------------------------------------------------------
 
@@ -220,17 +226,19 @@ CREATE TABLE `status` (
   `id` int(11) NOT NULL,
   `naziv` varchar(255) DEFAULT NULL,
   `obavjestenje` int(11) DEFAULT 0 COMMENT 'da li status povlaci obavjestenje 1/0',
-  `obavjestenje_tekst` text DEFAULT NULL
+  `obavjestenje_tekst` text DEFAULT NULL,
+  `aktivno` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 PACK_KEYS=0;
 
 --
 -- Dumping data for table `status`
 --
 
-INSERT INTO `status` (`id`, `naziv`, `obavjestenje`, `obavjestenje_tekst`) VALUES
-(1, 'Nedodijeljen', 0, NULL),
-(2, 'U obradi', 0, NULL),
-(3, 'Zavrsen', 1, 'Vas zahtjev je uspjesno zavrsen.');
+INSERT INTO `status` (`id`, `naziv`, `obavjestenje`, `obavjestenje_tekst`, `aktivno`) VALUES
+(1, 'Nedodijeljen', 0, '', 1),
+(2, 'U obradi', 0, '', 1),
+(3, 'Zavrsen', 1, '<div style=\"text-align: center;\"><b style=\"font-size: 1rem;\">Vas zahtjev je uspjesno zavrsen.</b></div><div style=\"text-align: left;\"><span style=\"font-size: 1rem;\">test 123</span></div>', 1),
+(4, 'Test novi', 1, '<p><u><b>test 123</b></u></p>', 0);
 
 -- --------------------------------------------------------
 
@@ -399,13 +407,13 @@ ALTER TABLE `kategorija`
 -- AUTO_INCREMENT for table `korisnik_modul`
 --
 ALTER TABLE `korisnik_modul`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `modul`
 --
 ALTER TABLE `modul`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `potkategorija`
@@ -435,7 +443,7 @@ ALTER TABLE `specijalizacija`
 -- AUTO_INCREMENT for table `status`
 --
 ALTER TABLE `status`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `uloga`

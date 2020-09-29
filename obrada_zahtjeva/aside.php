@@ -119,6 +119,17 @@
                 </li>
                 ';
               }
+              $active_sublink == 'administracija_korisnika' ? $active2 = 'active' :  $active2 = '';
+              if(pristupModulu('administracija_korisnika', $_SESSION['prijava']['korisnik_id'])){
+                echo '
+                <li class="nav-item ">
+                  <a href="../admin/korisnik.php" class="nav-link '.$active2.' ">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Korisnici sistema</p>
+                  </a>
+                </li>
+                ';
+              }
 
             ?>
           </ul>

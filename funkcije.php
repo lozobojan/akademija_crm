@@ -139,4 +139,45 @@
 		$cnt = mysqli_fetch_row(mysqli_query($dbconn, $sql))[0];
 		return ($cnt > 0);
 	}
+
+	function korisnik_specijalizacije($korisnik_id){
+		global $dbconn;
+		$specijalizacije = [];
+		$sql_spec = "
+						SELECT s.naziv FROM korisnik_specijalizacija ks
+						LEFT JOIN specijalizacija s ON ks.spec_id = s.id
+						WHERE ks.korisnik_id = $korisnik_id
+					";
+		$res_spec = mysqli_query($dbconn, $sql_spec);
+		while($row_spec = mysqli_fetch_assoc($res_spec)){
+			$specijalizacije[] = $row_spec['naziv'];
+		}
+		return implode(', ', $specijalizacije);
+	}
+
+	function korisnik_specijalizacije_id($korisnik_id){
+		global $dbconn;
+		$specijalizacije = [];
+		$sql_spec = "
+						SELECT spec_id FROM korisnik_specijalizacija ks
+						WHERE ks.korisnik_id = $korisnik_id
+					";
+		$res_spec = mysqli_query($dbconn, $sql_spec);
+		while($row_spec = mysqli_fetch_assoc($res_spec)){
+			$specijalizacije[] = $row_spec['spec_id'];
+		}
+		return $specijalizacije;
+	}
+
+	function sledeci_id($tabela){
+		global $dbconn;
+		$sql = "SELECT COALESCE(max(id),0)+1 FROM $tabela ";
+		return mysqli_fetch_row(mysqli_query($dbconn,$sql))[0];
+	}
+
+	function dodaj_spec($spec_id, $korisnik_id){
+		global $dbconn;
+		$sql = "INSERT INTO korisnik_specijalizacija (korisnik_id, spec_id) VALUES ($korisnik_id, $spec_id)";
+		return mysqli_query($dbconn,$sql);
+	}
 ?>
